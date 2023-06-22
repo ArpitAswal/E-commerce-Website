@@ -37,6 +37,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   page_transition: ^2.0.9
   blur: ^3.1.0
+  firebase_auth: ^4.6.3
+  firebase_core: ^2.14.0
+  firebase_database: ^10.2.3
+  #flutter-toast: ^8.2.2
 
 dev_dependencies:
   flutter_test:
