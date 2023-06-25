@@ -1,14 +1,24 @@
 import 'package:ecommerce_shopping_website/Screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'GlobalColors/colors.dart';
+import 'Global/colors.dart';
 import 'Screens/flash_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+await Firebase.initializeApp(options: const FirebaseOptions(
+    apiKey: "AIzaSyBVDKEf-BwcClL_LXTKsT11RBryuUq7byc",
+    appId: "1:790512872465:web:d508df6d7c593d11f215b0",
+    messagingSenderId: "790512872465",
+    projectId: "first-web-app-88191"));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key});
+
+  final Future<FirebaseApp> initialization = Firebase.initializeApp();
 
   // This widget is the root of your application.
   @override
@@ -47,8 +57,22 @@ class MyApp extends StatelessWidget {
           )
               .copyWith(background: backgroundColor),
         ),
-        home: const LogInScreen()
-      //const FlashScreen()
-    );
+        home: const LogInScreen());
+        /*StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context,snapshot) {
+          if (snapshot.hasError) {
+            return const Center(
+                child: Text('Error 404')
+            );
+          }
+          if (snapshot.hasData) {
+              return const FlashScreen(title:'Home');
+            }
+            else {
+              return const FlashScreen(title:'LogIn');
+            }
+        })
+    );*/
   }
 }

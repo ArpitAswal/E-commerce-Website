@@ -1,7 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:blur/blur.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:page_transition/page_transition.dart';
+
+import '../AuthServices/authentication.dart';
+import 'home_screen.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -16,9 +19,12 @@ class _LogInScreenState extends State<LogInScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  String email = '';
+  String pass = '';
+  String name = 'AA';
   bool hidden = false;
-  bool load = false;
   bool verified = false;
+  bool login = true;
   FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
@@ -54,154 +60,185 @@ class _LogInScreenState extends State<LogInScreen> {
                 color: Colors.white30,
               )),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 25.0),
+            padding: const EdgeInsets.only(top: 50.0),
             child: Center(
-              child: SizedBox(
-                  width: w / 3,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    color: Colors.white,
-                    elevation: 10,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 35.0, vertical: 20),
-                      child: Column(
-                        children: [
-                          const Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                'Log in',
+              child: Container(
+                width: 450,
+                color: Colors.white70,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  color: Colors.white,
+                  elevation: 10,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 35.0, vertical: 25),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 40),
+                        Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              (login == true) ? 'LogIn' : 'SignUp',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 28),
+                            )),
+                        const SizedBox(height: 25),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Email',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 28),
-                              )),
-                          const SizedBox(height: 25),
-                          const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Email',
-                                  style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'Need an account?',
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Sign up',
-                                      style: TextStyle(
-                                          color: Colors.teal,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400),
-                                    )
-                                  ],
-                                ),
-                              ]),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Form(
-                              key: formKey,
-                              child: Column(
+                                    fontSize: 17, fontWeight: FontWeight.w600),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  tff(emailController, true, emailFocusNode),
-                                  const SizedBox(
-                                    height: 12,
+                                  Text(
+                                    (login == true)
+                                        ? 'Need an account?'
+                                        : 'Already have an account?',
+                                    style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400),
                                   ),
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Password',
-                                          style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            IconButton(
-                                                onPressed: () {
-                                                  hidden = !hidden;
-                                                  setState(() {});
-                                                },
-                                                icon: (hidden == true)
-                                                    ? const Icon(
-                                                        Icons.visibility_off,
-                                                        color: Colors.lightBlue,
-                                                      )
-                                                    : const Icon(
-                                                        Icons.visibility,
-                                                        color: Colors.lightBlue,
-                                                      )),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              (hidden == false)
-                                                  ? 'Show'
-                                                  : 'Hide',
-                                              style: const TextStyle(
-                                                  color: Colors.teal,
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w400),
-                                            )
-                                          ],
-                                        ),
-                                      ]),
-                                  const SizedBox(
-                                    height: 6,
-                                  ),
-                                  tff(passController, hidden, passFocusNode)
+                                  const SizedBox(width: 7),
+                                  TextButton(
+                                      onPressed: (() {
+                                        login = !login;
+                                        setState(() {});
+                                      }),
+                                      child: Text(
+                                        (login == true) ? 'Sign up' : 'Log in',
+                                        style: const TextStyle(
+                                            color: Colors.teal,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400),
+                                      ))
                                 ],
                               ),
+                            ]),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Form(
+                            key: formKey,
+                            child: Column(
+                              children: [
+                                tff(emailController, true, emailFocusNode),
+                                const SizedBox(
+                                  height: 12,
+                                ),
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        'Password',
+                                        style: TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          IconButton(
+                                              onPressed: () {
+                                                hidden = !hidden;
+                                                setState(() {});
+                                              },
+                                              icon: (hidden == true)
+                                                  ? const Icon(
+                                                      Icons.visibility_off,
+                                                      color: Colors.lightBlue,
+                                                    )
+                                                  : const Icon(
+                                                      Icons.visibility,
+                                                      color: Colors.lightBlue,
+                                                    )),
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            (hidden == false) ? 'Show' : 'Hide',
+                                            style: const TextStyle(
+                                                color: Colors.teal,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w400),
+                                          )
+                                        ],
+                                      ),
+                                    ]),
+                                const SizedBox(
+                                  height: 6,
+                                ),
+                                tff(passController, hidden, passFocusNode)
+                              ],
                             ),
                           ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 2),
-                                elevation: 5,
-                                shadowColor: Colors.purple,
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(21)),
-                                    side: BorderSide(
-                                        color: Colors.white, width: 1.5)),
-                                backgroundColor: Colors.deepPurple),
-                            onPressed: () {
-                              if (formKey.currentState!.validate()) {
-                                setState(() {
-                                  load = true;
-                                });
-                                loginFirebase();
-                              }},
-                            child: Center(
-                                child: load
-                                    ? const CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      )
-                                    : const Text(
-                                        'Login',
-                                        style: TextStyle(
-                                            fontSize: 21, color: Colors.white),
-                                      )),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20.0, horizontal: 10),
+                          child: Column(
+                            children: [
+                              button((login == true) ? 'Login' : 'Signup',
+                                  Colors.teal[600]!, Colors.white, ''),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 14.0),
+                                child: Text('Or'),
+                              ),
+                              button(
+                                  (login == true)
+                                      ? 'Login with Google'
+                                      : 'Signup with Google',
+                                  Colors.white,
+                                  Colors.black,
+                                  'assets/google.png'),
+                              const SizedBox(height: 12),
+                              button(
+                                  (login == true)
+                                      ? 'Login with GitHub'
+                                      : 'Signup with GitHub',
+                                  Colors.white,
+                                  Colors.black,
+                                  'assets/GithubLogo.png'),
+                              const SizedBox(height: 12),
+                              button(
+                                  (login == true)
+                                      ? 'Login with Facebook'
+                                      : 'Signup with Facebook',
+                                  Colors.blue[700]!,
+                                  Colors.white,
+                                  'assets/FacebookLogo.jpg'),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        if (login == true)
+                          const Center(
+                              child: Text(
+                            'Forgot Password?',
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ))
+                        else
+                          const Center(
+                              child: Text(
+                            'By clicking the "Sign up " button, you are agree the Terms of Service and Privacy Policy',
+                            softWrap: true,
+                            textAlign: TextAlign.center,
+                          ))
+                      ],
                     ),
-                  )),
+                  ),
+                ),
+              ),
             ),
-          )
+          ),
         ],
       ),
     ));
@@ -232,48 +269,69 @@ class _LogInScreenState extends State<LogInScreen> {
         hintStyle: const TextStyle(color: Colors.red, fontSize: 11),
       ),
       onSaved: (value) {
-        if (kDebugMode) {
-          print('Saved value');
+        if (controller.text == passController.text) {
+          pass = value!;
+        } else {
+          email = value!;
         }
+        setState(() {});
       },
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter e-mail';
+          return (controller.text == passController.text)
+              ? 'Enter the password'
+              : 'Enter the email';
         }
         return null;
       },
     );
   }
 
-  Future<void> loginFirebase(){
-   return auth
-        .signInWithEmailAndPassword(
-        email: emailController.text.toString(),
-        password:
-        passController.text.toString())
-        .then((value) {
-      verified = auth.currentUser!.emailVerified;
-      if (verified) {
-        //alert.toastmessage(value.user!.email.toString());
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(
-                    'Email Successfully Verified')));
-        //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(
-                    'This account is still not verified, Try again signup and first verify then signin')));
-      }
-      setState(() {
-        load = false;
-      });
-    }).onError((error, stackTrace) {
-      setState(() {
-        load = false;
-      });
-      //alert.toastmessage(error.toString());
-    });
+  Widget button(String text, Color bgColor, Color textColor, String imgurl) {
+    return SizedBox(
+      height: 40,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            elevation: 5,
+            shadowColor: Colors.greenAccent,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(24)),
+                side: BorderSide(color: Colors.white, width: 1.5)),
+            backgroundColor: bgColor),
+        onPressed: () async {
+          if (formKey.currentState!.validate()) {
+            formKey.currentState!.save();
+            if (login == true) {
+              await Authentication.signIn(email, pass);
+            } else if (login == false) {
+              await Authentication.signUp(name, email, pass);
+            }
+            movescreen();
+          }
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (imgurl.isNotEmpty)
+              FittedBox(
+                alignment: Alignment.center,
+                child: CircleAvatar(
+                    radius: 15, child: Image.asset(imgurl)),
+              ),
+            const SizedBox(width: 7),
+            Text(
+              text.toString(),
+              style: TextStyle(fontSize: 17, color: textColor),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void movescreen() {
+    //Navigator.push(context, PageTransition(type:PageTransitionType.bottomToTopPop, child: const HomeScreen(),childCurrent: widget));
+  Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
   }
 }

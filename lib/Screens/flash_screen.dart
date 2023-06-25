@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'home_screen.dart';
 import 'login_screen.dart';
 
 class FlashScreen extends StatefulWidget {
-  const FlashScreen({super.key});
+   const FlashScreen({super.key, required this.title,});
+  final String title;
 
   @override
   State<FlashScreen> createState() => _FlashScreenState();
@@ -23,7 +25,12 @@ class _FlashScreenState extends State<FlashScreen>
     Future.delayed(const Duration(seconds: 10),(){
       _controller.stop(canceled: true);
     }).then((value) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => const LogInScreen()));
+      if(widget.title=='Home'){
+        return Navigator.pushReplacement(context, MaterialPageRoute(builder:(BuildContext context)=> const HomeScreen()));
+      }
+      else{
+      return Navigator.pushReplacement(context, MaterialPageRoute(builder:(BuildContext context)=> const LogInScreen()));
+      }
     });
   }
 
