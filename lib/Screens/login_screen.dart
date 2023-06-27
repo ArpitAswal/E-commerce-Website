@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:blur/blur.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:page_transition/page_transition.dart';
-
 import '../AuthServices/authentication.dart';
+import '../Global/message.dart';
 import 'home_screen.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -23,8 +23,9 @@ class _LogInScreenState extends State<LogInScreen> {
   String pass = '';
   String name = 'AA';
   bool hidden = false;
-  bool verified = false;
   bool login = true;
+  bool load1 = false;
+  bool load2 = false;
   FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
@@ -110,6 +111,8 @@ class _LogInScreenState extends State<LogInScreen> {
                                   TextButton(
                                       onPressed: (() {
                                         login = !login;
+                                        emailController.text='';
+                                        passController.text='';
                                         setState(() {});
                                       }),
                                       child: Text(
@@ -184,32 +187,21 @@ class _LogInScreenState extends State<LogInScreen> {
                               vertical: 20.0, horizontal: 10),
                           child: Column(
                             children: [
-                              button((login == true) ? 'Login' : 'Signup',
-                                  Colors.teal[600]!, Colors.white, ''),
+                              button(1, (login == true) ? 'Login' : 'Signup',
+                                  Colors.green[600]!, Colors.white, ''),
                               const Padding(
                                 padding: EdgeInsets.symmetric(vertical: 14.0),
                                 child: Text('Or'),
                               ),
-                              button(
-                                  (login == true)
-                                      ? 'Login with Google'
-                                      : 'Signup with Google',
-                                  Colors.white,
-                                  Colors.black,
-                                  'assets/google.png'),
+                              button(2, 'Continue with Google', Colors.white,
+                                  Colors.black, 'assets/google.png'),
+                              const SizedBox(height: 12),
+                              button(3, 'Continue with GitHub', Colors.white,
+                                  Colors.black, 'assets/GithubLogo.png'),
                               const SizedBox(height: 12),
                               button(
-                                  (login == true)
-                                      ? 'Login with GitHub'
-                                      : 'Signup with GitHub',
-                                  Colors.white,
-                                  Colors.black,
-                                  'assets/GithubLogo.png'),
-                              const SizedBox(height: 12),
-                              button(
-                                  (login == true)
-                                      ? 'Login with Facebook'
-                                      : 'Signup with Facebook',
+                                  4,
+                                  'Continue with Facebook',
                                   Colors.blue[700]!,
                                   Colors.white,
                                   'assets/FacebookLogo.jpg'),
@@ -287,51 +279,100 @@ class _LogInScreenState extends State<LogInScreen> {
     );
   }
 
-  Widget button(String text, Color bgColor, Color textColor, String imgurl) {
+  Widget button(
+      int btn, String text, Color bgColor, Color textColor, String imgurl) {
     return SizedBox(
       height: 40,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 2),
-            elevation: 5,
+            elevation: 7,
             shadowColor: Colors.greenAccent,
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(24)),
                 side: BorderSide(color: Colors.white, width: 1.5)),
             backgroundColor: bgColor),
         onPressed: () async {
-          if (formKey.currentState!.validate()) {
-            formKey.currentState!.save();
+          if (btn == 1) {
+            if (formKey.currentState!.validate()) {
+              formKey.currentState!.save();
+              setState(() {
+                load1 = true;
+              });
+              if (login == true) {
+                final status= await Authentication.signIn(email, pass);
+                if(status.isEmpty){
+                  movescreen();
+                }
+                else{
+                  Alert.toastmessage(status);
+                }
+              } else if (login == false) {
+                final status= await Authentication.signUp(name, email, pass);
+                if(status.isEmpty){
+                  movescreen();
+                }
+                else {
+                  Alert.toastmessage(status);
+                }
+              }
+              Future.delayed(const Duration(seconds: 2));
+              setState(() {
+                load1 = false;
+              });
+            }
+          } else if (btn == 2) {
+            User? user = await Authentication.googleSignIn();
+            if (user != null) {
+              movescreen();
+            }
+          } else if (btn == 3) {
             if (login == true) {
               await Authentication.signIn(email, pass);
             } else if (login == false) {
               await Authentication.signUp(name, email, pass);
             }
-            movescreen();
+          } else if (btn == 4) {
+            if (login == true) {
+              await Authentication.signIn(email, pass);
+            } else if (login == false) {
+              await Authentication.signUp(name, email, pass);
+            }
           }
         },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (imgurl.isNotEmpty)
-              FittedBox(
-                alignment: Alignment.center,
-                child: CircleAvatar(
-                    radius: 15, child: Image.asset(imgurl)),
+        child: (btn == 1 && load1 == true)
+            ? const Center(
+              child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  color: Colors.white,
+                ),
+            )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (imgurl.isNotEmpty)
+                    FittedBox(
+                      alignment: Alignment.center,
+                      child:
+                          CircleAvatar(radius: 15, child: Image.asset(imgurl)),
+                    ),
+                  const SizedBox(width: 7),
+                  Text(
+                    text.toString(),
+                    style: TextStyle(fontSize: 15, color: textColor),
+                  ),
+                ],
               ),
-            const SizedBox(width: 7),
-            Text(
-              text.toString(),
-              style: TextStyle(fontSize: 17, color: textColor),
-            ),
-          ],
-        ),
       ),
     );
   }
 
   void movescreen() {
-    //Navigator.push(context, PageTransition(type:PageTransitionType.bottomToTopPop, child: const HomeScreen(),childCurrent: widget));
-  Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
+    Navigator.push(
+        context,
+        PageTransition(
+            type: PageTransitionType.bottomToTopPop,
+            child: const HomeScreen(),
+            childCurrent: widget));
   }
 }
