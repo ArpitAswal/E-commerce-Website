@@ -21,7 +21,7 @@ class _LogInScreenState extends State<LogInScreen> {
   final formKey = GlobalKey<FormState>();
   String email = '';
   String pass = '';
-  String name = 'AA';
+  String name = '';
   bool hidden = false;
   bool login = true;
   bool load1 = false;
@@ -372,7 +372,7 @@ class _LogInScreenState extends State<LogInScreen> {
         context,
         PageTransition(
             type: PageTransitionType.bottomToTopPop,
-            child: const HomeScreen(),
+            child: const HomeScreen(title: 'AA Mart',),
             childCurrent: widget));
   }
 }

@@ -86,6 +86,9 @@ class Authentication{
       prefs.setString('name', name);
       prefs.setString('userEmail', userEmail);
       prefs.setString('imageUrl',imageUrl);
+
+      FirebaseFirestore.instance.collection('UsersAccountData').doc('UserId:$uid').set(({'name':name, 'email':userEmail, 'pass':'Not exist'})).onError((e, _) => debugPrint("Error writing document: $e"));
+
     }
     return user;
   }

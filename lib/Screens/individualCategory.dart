@@ -1,0 +1,229 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:iconly/iconly.dart';
+import '../APIModel/JeweleryModel.dart';
+import '../APIModel/MensClothsModel.dart';
+import '../APIModel/WomensClothsModel.dart';
+import '../Widgets/category2Widget.dart';
+import '../Widgets/categoryWidget.dart';
+
+class AnimeTshirt {
+  Map<String, String> anime;
+  AnimeTshirt(this.anime);
+}
+
+List<AnimeTshirt> images = [
+  AnimeTshirt({'assets/AnimeTshirt/Acnologia_dark_tshirt.jpg': "Acnologia"}),
+  AnimeTshirt({'assets/AnimeTshirt/Gojo_white_tshirt.jpg': "Satoru Gojo"}),
+  AnimeTshirt({'assets/AnimeTshirt/Itachi_white_tshirt.jpg': "Itachi Uchiha"}),
+  AnimeTshirt({'assets/AnimeTshirt/Kakashi_dark_tshirt.jpg': "Kakashi Hatake"}),
+  AnimeTshirt({'assets/AnimeTshirt/Mikey_white_tshirt.jpg': "Mikey"}),
+];
+
+bool isError = false;
+
+class IndividualCategory extends StatefulWidget {
+  const IndividualCategory({
+    Key? key,
+    required this.title,
+  }) : super(key: key);
+  final String title;
+
+  @override
+  State<IndividualCategory> createState() => _IndividualCategoryState(title);
+}
+
+final List<JeweleryModel> jewelList = [];
+final List<MensClothsModel> mensList = [];
+final List<WomensClothsModel> womensList = [];
+
+class _IndividualCategoryState extends State<IndividualCategory> {
+  final ScrollController _controller = ScrollController();
+
+  _IndividualCategoryState(this.name);
+  String name;
+
+  Future<void> getJewelery() async {
+    try {
+      final response = await http.get(
+          Uri.parse('https://fakestoreapi.com/products/category/jewelery'));
+
+      var data = jsonDecode(response.body.toString());
+      if (response.statusCode == 200) {
+        jewelList.clear();
+        for (Map i in data) {
+          jewelList.add(JeweleryModel.fromJson(i));
+        }
+      }
+      debugPrint('${jewelList.length}');
+    } catch (error) {
+      isError = true;
+      throw error.toString();
+    }
+  }
+
+  Future<void> getMens() async {
+    try {
+      final response = await http.get(Uri.parse(
+          "https://fakestoreapi.com/products/category/men's clothing"));
+
+      var data = jsonDecode(response.body.toString());
+      if (response.statusCode == 200) {
+        mensList.clear();
+        for (Map i in data) {
+          mensList.add(MensClothsModel.fromJson(i));
+        }
+      }
+      debugPrint('${mensList.length}');
+    } catch (error) {
+      isError = true;
+      throw error.toString();
+    }
+  }
+
+  Future<void> getWomens() async {
+    try {
+      final response = await http.get(Uri.parse(
+          "https://fakestoreapi.com/products/category/women's clothing"));
+
+      var data = jsonDecode(response.body.toString());
+      if (response.statusCode == 200) {
+        womensList.clear();
+        for (Map i in data) {
+          womensList.add(WomensClothsModel.fromJson(i));
+        }
+      }
+      debugPrint('${womensList.length}');
+    } catch (error) {
+      isError = true;
+      throw error.toString();
+    }
+  }
+
+  @override
+  void initState() {
+    if (name.contains("Women's Jewelery")) {
+      getJewelery();
+    } else if (name.contains("Women's Kurti")) {
+      getWomens();
+    } else if (name.contains("Men's Casual")) {
+      getMens();
+    }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: (isError)
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    IconlyBold.danger,
+                    color: Colors.red,
+                    size: 50,
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                      'There is an error in server Please again open the website',
+                      style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500)),
+                ],
+              ),
+            )
+          : (jewelList.isEmpty &&
+                  images.isEmpty &&
+                  mensList.isEmpty &&
+                  womensList.isEmpty)
+              ? const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'Loading',
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w400),
+                      )
+                    ],
+                  ),
+                )
+              : Stack(children: [
+                  SingleChildScrollView(
+                    controller: _controller,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 12),
+                          child: GridView.builder(
+                              shrinkWrap: true,
+                              itemCount: (name.contains("Women's Jewelery"))
+                                  ? jewelList.length
+                                  : (name.contains("Women's Kurti"))
+                                      ? womensList.length
+                                      : (name.contains("Men's Casual"))
+                                          ? mensList.length
+                                          : images.length,
+                              scrollDirection: Axis.vertical,
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                crossAxisSpacing: 10.0,
+                                mainAxisSpacing: 6.0,
+                                maxCrossAxisExtent: 300,
+                              ),
+                              itemBuilder: (ctx, index) {
+                                if (name.contains("Women's Jewelery")) {
+                                  return Category2Widget(
+                                      id: jewelList[index].id.toString(),
+                                      title: jewelList[index].title.toString(),
+                                      price: jewelList[index].price,
+                                      image: jewelList[index].image.toString(),
+                                      category:
+                                          jewelList[index].category.toString());
+                                } else if (name.contains("Women's Kurti")) {
+                                  return Category2Widget(
+                                      id: womensList[index].id.toString(),
+                                      title: womensList[index].title.toString(),
+                                      price: womensList[index].price,
+                                      image: womensList[index].image.toString(),
+                                      category: womensList[index]
+                                          .category
+                                          .toString());
+                                } else if (name.contains("Men's Casual")) {
+                                  return Category2Widget(
+                                      id: mensList[index].id.toString(),
+                                      title: mensList[index].title.toString(),
+                                      price: mensList[index].price,
+                                      image: mensList[index].image.toString(),
+                                      category:
+                                          mensList[index].category.toString());
+                                } else {
+                                  return CategoryWidget(
+                                      image:
+                                          images[index].anime.keys.toList()[0],
+                                      name: images[index]
+                                          .anime
+                                          .values
+                                          .toList()[0]);
+                                }
+                              }),
+                        ),
+                      ],
+                    ),
+                  ),
+                ]),
+    );
+  }
+}

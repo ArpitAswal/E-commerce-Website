@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'home_screen.dart';
 import 'login_screen.dart';
 
@@ -26,7 +25,7 @@ class _FlashScreenState extends State<FlashScreen>
       _controller.stop(canceled: true);
     }).then((value) {
       if(widget.title=='Home'){
-        return Navigator.pushReplacement(context, MaterialPageRoute(builder:(BuildContext context)=> const HomeScreen()));
+       return Navigator.pushReplacement(context, MaterialPageRoute(builder:(BuildContext context)=> const HomeScreen(title: 'AA Mart',)));
       }
       else{
       return Navigator.pushReplacement(context, MaterialPageRoute(builder:(BuildContext context)=> const LogInScreen()));
