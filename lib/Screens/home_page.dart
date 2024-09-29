@@ -276,7 +276,7 @@ class _HomePageState extends State<HomePage> {
                                   context,
                                   PageTransition(
                                       type: PageTransitionType.fade,
-                                      child: const AllProducts()));
+                                      child: const AllProductScreen()));
                             },
                             icon: IconlyBold.arrow_right_2),
                       ],

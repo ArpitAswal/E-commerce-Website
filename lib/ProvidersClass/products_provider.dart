@@ -13,23 +13,23 @@ class ProductsProvider extends ChangeNotifier{
 
   List<Products> _productsList = [];
   List<Products> _searchList = [];
+  bool prodLoading = false;
   bool isLoading = false;
-  bool _isClick = false;
+  int prodCurrentLimit = 12;
 
   late ProductInfoModel? _singleProduct;
 
   List<Products> get productsList=> _productsList;
   List<Products> get searchList=> _productsList;
   ProductInfoModel? get singleProduct=> _singleProduct;
-  bool get isClick => _isClick;
 
   Future<void> getAllProducts() async {
-    isLoading = true;
+    prodLoading = true;
     notifyListeners();
     try {
       final response = await _service.getProducts();
       _productsList = response;
-      isLoading = false;
+      prodLoading = false;
       notifyListeners();
     }  on AppException catch (e) {
       throw AppException(message: e.message, type: e.type);
@@ -48,8 +48,15 @@ class ProductsProvider extends ChangeNotifier{
 
   }
 
-  void setClick(bool click){
-    _isClick = !click;
+  Future<void> loadMore() async{
+    isLoading = true;
+    notifyListeners();
+
+    if(prodCurrentLimit < productsList.length){
+      prodCurrentLimit = (prodCurrentLimit + 8 >= productsList.length) ? productsList.length : prodCurrentLimit + 8;
+    }
+    await Future.delayed(const Duration(seconds: 2));
+    isLoading = false;
     notifyListeners();
   }
 

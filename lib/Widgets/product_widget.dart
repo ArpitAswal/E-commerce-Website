@@ -19,7 +19,7 @@ class ProductWidget extends StatelessWidget {
 
     return  InkWell(
       onTap: (){
-        Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: ProductDetailScreen(prodId: prod.id ?? -1,), reverseDuration: Duration(milliseconds: 500),),);
+        Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: ProductDetailScreen(prodId: prod.id ?? -1,), reverseDuration: Duration(milliseconds: 700),),);
       },
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
