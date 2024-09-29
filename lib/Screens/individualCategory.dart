@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconly/iconly.dart';
-import '../APIModel/JeweleryModel.dart';
-import '../APIModel/MensClothsModel.dart';
-import '../APIModel/WomensClothsModel.dart';
+import '../DataModel/JeweleryModel.dart';
+import '../DataModel/MensClothsModel.dart';
+import '../DataModel/WomensClothsModel.dart';
 import '../Widgets/category2Widget.dart';
 import '../Widgets/categoryWidget.dart';
 
@@ -36,7 +36,7 @@ class IndividualCategory extends StatefulWidget {
 
 final List<JeweleryModel> jewelList = [];
 final List<MensClothsModel> mensList = [];
-final List<WomensClothsModel> womensList = [];
+final List<WomensClothsModel> womenList = [];
 
 class _IndividualCategoryState extends State<IndividualCategory> {
   final ScrollController _controller = ScrollController();
@@ -89,12 +89,12 @@ class _IndividualCategoryState extends State<IndividualCategory> {
 
       var data = jsonDecode(response.body.toString());
       if (response.statusCode == 200) {
-        womensList.clear();
+        womenList.clear();
         for (Map i in data) {
-          womensList.add(WomensClothsModel.fromJson(i));
+          womenList.add(WomensClothsModel.fromJson(i));
         }
       }
-      debugPrint('${womensList.length}');
+      debugPrint('${womenList.length}');
     } catch (error) {
       isError = true;
       throw error.toString();
@@ -139,7 +139,7 @@ class _IndividualCategoryState extends State<IndividualCategory> {
           : (jewelList.isEmpty &&
                   images.isEmpty &&
                   mensList.isEmpty &&
-                  womensList.isEmpty)
+                  womenList.isEmpty)
               ? const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -171,7 +171,7 @@ class _IndividualCategoryState extends State<IndividualCategory> {
                               itemCount: (name.contains("Women's Jewelery"))
                                   ? jewelList.length
                                   : (name.contains("Women's Kurti"))
-                                      ? womensList.length
+                                      ? womenList.length
                                       : (name.contains("Men's Casual"))
                                           ? mensList.length
                                           : images.length,
@@ -186,7 +186,7 @@ class _IndividualCategoryState extends State<IndividualCategory> {
                               itemBuilder: (ctx, index) {
                                 if (name.contains("Women's Jewelery")) {
                                   return Category2Widget(
-                                      id: jewelList[index].id.toString(),
+                                      id: jewelList[index].id ?? -1,
                                       title: jewelList[index].title.toString(),
                                       price: jewelList[index].price,
                                       image: jewelList[index].image.toString(),
@@ -194,16 +194,16 @@ class _IndividualCategoryState extends State<IndividualCategory> {
                                           jewelList[index].category.toString());
                                 } else if (name.contains("Women's Kurti")) {
                                   return Category2Widget(
-                                      id: womensList[index].id.toString(),
-                                      title: womensList[index].title.toString(),
-                                      price: womensList[index].price,
-                                      image: womensList[index].image.toString(),
-                                      category: womensList[index]
+                                      id: womenList[index].id!,
+                                      title: womenList[index].title.toString(),
+                                      price: womenList[index].price,
+                                      image: womenList[index].image.toString(),
+                                      category: womenList[index]
                                           .category
                                           .toString());
                                 } else if (name.contains("Men's Casual")) {
                                   return Category2Widget(
-                                      id: mensList[index].id.toString(),
+                                      id: mensList[index].id!,
                                       title: mensList[index].title.toString(),
                                       price: mensList[index].price,
                                       image: mensList[index].image.toString(),

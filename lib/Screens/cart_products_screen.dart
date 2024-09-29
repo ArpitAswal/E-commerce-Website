@@ -69,8 +69,8 @@ class _CartProductsScreenState extends State<CartProductsScreen> {
                                             PageTransition(
                                               type: PageTransitionType
                                                   .bottomToTop,
-                                              child: ProductDetails(
-                                                id: item.id.toString(),
+                                              child: ProductDetailScreen(
+                                                prodId: item.id ?? -1,
                                               ),
                                             ),
                                           );

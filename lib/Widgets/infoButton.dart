@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:ecommerce_shopping_website/APIModel/Products.dart';
+import 'package:ecommerce_shopping_website/DataModel/Products.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_shopping_website/Widgets/rectTween.dart';
 import 'package:ecommerce_shopping_website/Widgets/heroRoute.dart';

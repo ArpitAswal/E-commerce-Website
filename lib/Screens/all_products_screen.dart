@@ -4,8 +4,8 @@ import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:ecommerce_shopping_website/Widgets/products_widget.dart';
-import '../APIModel/Products.dart';
+import 'package:ecommerce_shopping_website/Widgets/product_widget.dart';
+import '../DataModel/Products.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import '../Widgets/cart_calling.dart';
 import '../Widgets/infoButton.dart';
@@ -188,7 +188,7 @@ class _AllProductsState extends State<AllProducts> {
                                       itemBuilder: (ctx, index) {
                                         return ChangeNotifierProvider.value(
                                             value: productsList[index],
-                                            child: const ProductsWidget());
+                                            child: ProductWidget(index: index, whichList: true,));
                                       }),
                                 ),
                               ),

@@ -8,7 +8,7 @@
 
 class WomensClothsModel {
   WomensClothsModel({
-      num? id, 
+      int? id,
       String? title, 
       double? price,
       String? description, 
@@ -33,14 +33,14 @@ class WomensClothsModel {
     _image = json['image'];
     _rating = json['rating'] != null ? Rating.fromJson(json['rating']) : null;
   }
-  num? _id;
+  int? _id;
   String? _title;
   double? _price;
   String? _description;
   String? _category;
   String? _image;
   Rating? _rating;
-WomensClothsModel copyWith({  num? id,
+WomensClothsModel copyWith({  int? id,
   String? title,
   double? price,
   String? description,
@@ -55,7 +55,7 @@ WomensClothsModel copyWith({  num? id,
   image: image ?? _image,
   rating: rating ?? _rating,
 );
-  num? get id => _id;
+  int? get id => _id;
   String? get title => _title;
   double? get price => _price;
   String? get description => _description;

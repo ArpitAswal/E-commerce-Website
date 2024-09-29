@@ -7,7 +7,7 @@ import '../Screens/products_details_screen.dart';
 
 class Category2Widget extends StatefulWidget {
    const Category2Widget({Key? key, required this.id, required this.title, required this.price, required this.image, required this.category, }) : super(key: key);
-   final String id;
+   final int id;
    final String title;
    final double? price;
    final String image;
@@ -32,7 +32,7 @@ class _Category2WidgetState extends State<Category2Widget> {
         child: InkWell(
           borderRadius: BorderRadius.circular(8.0),
           onTap: () {
-            Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: ProductDetails(id:widget.id),),);
+            Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: ProductDetailScreen(prodId:widget.id),),);
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

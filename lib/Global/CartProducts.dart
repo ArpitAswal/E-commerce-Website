@@ -14,7 +14,7 @@ class CartProducts{
    "title" : title,
    "price" : price,
    "description" : description,
-   "caregory"  : category,
+   "category"  : category,
     "image" : image,
   };
 

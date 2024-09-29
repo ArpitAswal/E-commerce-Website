@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class Buttons extends StatelessWidget {
-  const Buttons({Key? key, required this.function, required this.icon})
-      : super(key: key);
+  const Buttons({super.key, required this.function, required this.icon, this.bgColor = Colors.white, this.iconColor = Colors.deepPurple});
   final Function function;
   final IconData icon;
+  final Color bgColor;
+  final Color iconColor;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -16,11 +18,11 @@ class Buttons extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Theme.of(context).cardColor,
+              color: bgColor,
             ),
             child: Padding(
               padding: const EdgeInsets.all(6.0),
-              child: Icon(icon),
+              child: Icon(icon, color: iconColor),
             ),
           )),
     );

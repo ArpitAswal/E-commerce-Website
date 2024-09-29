@@ -1,151 +1,221 @@
-import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:ecommerce_shopping_website/Global/Colors.dart';
-import '../APIModel/IndividualProduct.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iconly/iconly.dart';
+import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
-class ProductDetails extends StatefulWidget {
-  const ProductDetails({
-    Key? key,
-    required this.id,
-  }) : super(key: key);
-  final String id;
+import '../DataModel/productInfoModel.dart';
+import '../ProvidersClass/products_provider.dart';
+import '../Widgets/product_rating_widget.dart';
 
-  @override
-  State<ProductDetails> createState() => _ProductDetailsState();
-}
+class ProductDetailScreen extends StatelessWidget {
+  const ProductDetailScreen({super.key, required this.prodId});
 
-class _ProductDetailsState extends State<ProductDetails> {
-  final titleStyle = const TextStyle(
-      fontSize: 24,
-      fontWeight: FontWeight.bold,
-      decoration: TextDecoration.underline);
-
-  Future<IndividualProduct> getProductInfo() async {
-    final response = await http
-        .get(Uri.parse('https://fakestoreapi.com/products/${widget.id}'));
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body.toString());
-      return IndividualProduct.fromJson(data);
-    } else {
-      throw Exception('Error');
-    }
-  }
-
-  final ScrollController _controller = ScrollController();
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    getProductInfo();
-    super.initState();
-  }
+  final int prodId;
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: SizedBox(
-        height: size.height,
-        width: size.width,
-        /* decoration: BoxDecoration(
-          gradient: const LinearGradient(
-              colors: [
-                Color(0xFF7A60A5),
-                Color(0xFF82C3DF),
-              ],
-              begin: FractionalOffset(0.0, 0.0),
-              end: FractionalOffset(1.0, 0.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp),
-        ),
-        */
-        child: SingleChildScrollView(
-          controller: _controller,
-          child: FutureBuilder(
-              future: getProductInfo(),
-              builder: (context, AsyncSnapshot<IndividualProduct> snapshot) {
-                if (snapshot.hasData) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const BackButton(
-                                color: Colors.black,
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 6.0),
-                                  child: Center(
-                                    child: Text(
-                                      'Product: ${snapshot.data!.title.toString()}',
-                                      style: const TextStyle(
-                                        color: Colors.lightBlue,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      maxLines: 2,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                "\$ ${snapshot.data!.price}",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green,
-                                    fontSize: 25),
-                                textAlign: TextAlign.end,
-                              )
-                            ]),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: Center(
-                          child: SizedBox(
-                              height: size.height * 0.7,
-                              width: size.width / 2,
-                              child: Image.network(
-                                snapshot.data!.image.toString(),
-                                fit: BoxFit.fill,
-                              )),
+      body: Consumer<ProductsProvider>(builder:
+          (BuildContext context, ProductsProvider provider, Widget? child) {
+        return FutureBuilder(
+          future: provider.getSingleProduct(prodId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const ProductShimmer(); // Shimmer effect while loading
+            } else if (snapshot.hasError) {
+              return const Text(
+                  "There is some error to display the information of selected product");
+            } else {
+              return ProductWidget(data: snapshot.data!);
+            }
+          },
+        );
+      }),
+    );
+  }
+}
+
+class ProductShimmer extends StatelessWidget {
+  const ProductShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      child: Shimmer.fromColors(
+          enabled: true,
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade300,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: 26.0,
+                    height: 26.0,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Flexible(
+                    child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                        height: 16.0,
+                        color: Colors.white),
+                  ),
+                  Container(
+                    width: 26.0,
+                    height: 26.0,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.05,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.6,
+                height: MediaQuery.of(context).size.height * 0.8,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.05,
+              ),
+              Center(
+                child: Container(
+                    width: double.infinity, height: 16.0, color: Colors.white),
+              ),
+            ],
+          )),
+    );
+  }
+}
+
+class ProductWidget extends StatelessWidget {
+  const ProductWidget({super.key, required this.data});
+
+  final ProductInfoModel data;
+  @override
+  Widget build(BuildContext context) {
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              const BackButton(
+                color: Colors.black,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    data.title.toString(),
+                    style: GoogleFonts.lato(
+                        color: Colors.blue,
+                        fontSize: 21,
+                        fontWeight: FontWeight.w500),
+                    maxLines: 2,
+                    softWrap: true,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              Text(
+                "\$ ${data.price}",
+                style: GoogleFonts.alkatra(color: Colors.green, fontSize: 18),
+                textAlign: TextAlign.end,
+              )
+            ]),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.05,
+            ),
+            Flexible(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: Hero(
+                  tag: "${data.image.toString()}/HomePage",
+                  transitionOnUserGestures: true,
+                  flightShuttleBuilder: (flightContext, animation, direction, fromContext, toContext) {
+                    // Use different animations for push and pop
+                    return AnimatedBuilder(
+                      animation: animation,
+                      child: Image.network(data.image!),
+                      builder: (context, child) {
+                        // Customize animation for push and pop
+                        final value = direction == HeroFlightDirection.push
+                            ? animation.value
+                            : (1.0 - animation.value);  // Slow down pop
+
+                        return Transform.scale(
+                          scale: 1.0 + (0.5 * value),  // Scale it smoothly
+                          child: child,
+                        );
+                      },
+                    );
+                  },
+                  child: CachedNetworkImage(
+                    key: UniqueKey(),
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    imageUrl: data.image.toString(),
+                    fit: BoxFit.fill,
+                    placeholder: (context, url) =>
+                        SizedBox(
+                          height: 24.0,
+                          width: 24.0,
+                          child: const CircularProgressIndicator(
+                            backgroundColor: Colors.blue,
+                            valueColor: AlwaysStoppedAnimation(Colors.yellow),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Description', style: titleStyle),
-                            const SizedBox(
-                              height: 18,
-                            ),
-                            Text(
-                              '"${snapshot.data!.description.toString()}"',
-                              style: TextStyle(
-                                  fontSize: 21,
-                                  color: textColor,
-                                  fontStyle: FontStyle.italic),
-                            ),
-                          ],
+                    errorWidget: (context, url, error) =>
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.04,
+                          height: MediaQuery.of(context).size.height * 0.04,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            gradient: LinearGradient(colors: [
+                              Colors.lightBlue,
+                              Colors.indigoAccent
+                            ])
+                          ),
+                          child: Icon(Icons.error, color: Colors.red, size: 32,)
                         ),
-                      ),
-                    ],
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      SizedBox(height: size.height / 2),
-                      const CircularProgressIndicator(),
-                    ],
-                  );
-                }
-              }),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.05,
+            ),
+            Center(
+              child: Text('"${data.description.toString()}"',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.alkatra(
+                      color: Colors.grey,
+                      fontSize: 18,
+                      fontStyle: FontStyle.italic)),
+            ),
+            RatingBuilder(
+              rating: data.rating!.rate ?? 0,
+            ),
+          ],
         ),
       ),
     );
