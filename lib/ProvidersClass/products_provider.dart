@@ -1,24 +1,23 @@
 import 'package:ecommerce_shopping_website/Repository/products_repositories.dart';
 import 'package:flutter/material.dart';
 
-import '../DataModel/Products.dart';
-import '../DataModel/productInfoModel.dart';
+import '../DataModel/products_model.dart';
 import '../Utils/app_exceptions.dart';
 
 class ProductsProvider extends ChangeNotifier {
   final _service = ProductsRepositories();
 
-  List<Products> _productsList = [];
-  List<Products> _searchList = [];
+  List<ProductModel> _productsList = [];
+  List<ProductModel> _searchList = [];
   bool prodLoading = false;
   bool isLoading = false;
   int prodCurrentLimit = 12;
 
-  late ProductInfoModel? _singleProduct;
+  late ProductModel? _singleProduct;
 
-  List<Products> get productsList => _productsList;
-  List<Products> get searchList => _productsList;
-  ProductInfoModel? get singleProduct => _singleProduct;
+  List<ProductModel> get productsList => _productsList;
+  List<ProductModel> get searchList => _productsList;
+  ProductModel? get singleProduct => _singleProduct;
 
   List<Map<String, int>> mens = [
     {
@@ -79,7 +78,7 @@ class ProductsProvider extends ChangeNotifier {
     }
   }
 
-  Future<ProductInfoModel> getSingleProduct(int prodId) async {
+  Future<ProductModel> getSingleProduct(int prodId) async {
     try {
       return await _service.getProductInfo(prodId);
     } on AppException catch (e) {
@@ -87,7 +86,7 @@ class ProductsProvider extends ChangeNotifier {
     }
   }
 
-  void setSearchList(List<Products> data) {}
+  void setSearchList(List<ProductModel> data) {}
 
   Future<void> loadMore() async {
     isLoading = true;

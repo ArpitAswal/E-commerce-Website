@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Global/colors.dart';
+import 'ProvidersClass/category_provider.dart';
+import 'ProvidersClass/login_provider.dart';
 import 'ProvidersClass/products_provider.dart';
 import 'Screens/flash_screen.dart';
 
@@ -17,11 +19,11 @@ void main() async {
           messagingSenderId: "790512872465",
           appId: "1:790512872465:web:d508df6d7c593d11f215b0"));
   await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
-  runApp(
-    MultiProvider(providers: [
-     ChangeNotifierProvider(create: (context)=> ProductsProvider()) 
-    ], child: MyApp()
-    ));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => LoginProvider()),
+    ChangeNotifierProvider(create: (context) => ProductsProvider()),
+    ChangeNotifierProvider(create: (_) => CategoryProvider()),
+  ], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

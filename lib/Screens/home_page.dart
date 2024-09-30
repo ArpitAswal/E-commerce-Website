@@ -1,4 +1,4 @@
-import 'package:card_swiper/card_swiper.dart';
+import 'package:ecommerce_shopping_website/Utils/gridview_attributes.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:page_transition/page_transition.dart';
@@ -10,7 +10,6 @@ import '../Widgets/iconButtons.dart';
 import '../Widgets/product_widget.dart';
 import '../Widgets/swiper_widget.dart';
 import 'account_screen.dart';
-import 'all_category_screen.dart';
 import 'all_products_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -77,21 +76,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ],
-            ),
-          ),
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 12.0),
-            child: Buttons(
-              function: () {
-                Navigator.push(
-                  context,
-                  PageTransition(
-                    type: PageTransitionType.leftToRightWithFade,
-                    child: const AllCategory(),
-                  ),
-                );
-              },
-              icon: IconlyBold.category,
             ),
           ),
           actions: [
@@ -225,19 +209,15 @@ class _HomePageState extends State<HomePage> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     gridDelegate:
                     SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: getCrossAxisCount(context),
+                      crossAxisCount: GridViewAttributes.getCrossAxisCount(context),
                       mainAxisSpacing: 12.0,
                       crossAxisSpacing: 16.0,
-                      childAspectRatio: getChildAspectRatio(context),
+                      childAspectRatio: GridViewAttributes.getChildAspectRatio(context),
                     ),
                     itemBuilder: (ctx, index) {
-                      //here we have to pass something that will indicate which list we want to use to display item
-                      bool b = (_searchController.text.isEmpty)
-                          ? true // indicate that we will use products list
-                          : false; // indicate that we will use search list
                       return ChangeNotifierProvider.value(
                         value: providerInstance,
-                        child: ProductWidget(index: index, whichList: b),
+                        child: ProductWidget(index: index, whichList: (_searchController.text.isEmpty) ? "ProductList" : "SearchList"),
                       );
                     }),
               ]),
@@ -246,37 +226,4 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 
-  int getCrossAxisCount(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    if (screenWidth >= 1100) {
-      return 4; // Large screens (desktops, tablets)
-    } else if (screenWidth >= 800) {
-      return 3; // Medium screens (tablets)
-    } else if (screenWidth >= 600) {
-      return 2; // Small screens (larger phones, tablets)
-    } else {
-      return 1; // Extra small screens (phones)
-    }
-  }
-
-  double getChildAspectRatio(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    if (screenWidth >= 1200){
-      return 1.2;
-    } else if(screenWidth >= 1100){
-      return 1.0;
-    } else if (screenWidth >= 950) {
-      return 1.2;  // For larger screens
-    } else if (screenWidth >= 800) {
-      return 1.0; // For medium screens
-    } else if (screenWidth >= 750){
-      return 1.4;
-    } else if (screenWidth >= 600) {
-      return 1.2;  // For smaller screens
-    } else {
-      return 2.0;  // For extra small screens
-    }
-  }
 }

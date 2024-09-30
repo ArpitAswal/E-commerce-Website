@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../DataModel/productInfoModel.dart';
+import '../DataModel/products_model.dart';
 import '../ProvidersClass/products_provider.dart';
 import '../Widgets/product_rating_widget.dart';
 
@@ -105,7 +105,7 @@ class ProductShimmer extends StatelessWidget {
 class ProductWidget extends StatelessWidget {
   const ProductWidget({super.key, required this.data});
 
-  final ProductInfoModel data;
+  final ProductModel data;
   @override
   Widget build(BuildContext context) {
 

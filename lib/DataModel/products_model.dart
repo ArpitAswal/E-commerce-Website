@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 
 import 'Rating.dart';
 
-class Products with ChangeNotifier {
-  Products({
+class ProductModel with ChangeNotifier {
+  ProductModel({
     this.id,
     this.title,
     this.price,
@@ -12,7 +12,7 @@ class Products with ChangeNotifier {
     this.image,
     this.rating,});
 
-  Products.fromJson(dynamic json) {
+  ProductModel.fromJson(dynamic json) {
     id = json['id'];
     title = json['title'];
     price = json['price'];

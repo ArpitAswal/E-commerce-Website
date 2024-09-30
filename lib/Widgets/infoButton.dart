@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'package:ecommerce_shopping_website/DataModel/Products.dart';
+import 'package:ecommerce_shopping_website/DataModel/products_model.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_shopping_website/Widgets/rectTween.dart';
 import 'package:ecommerce_shopping_website/Widgets/heroRoute.dart';
 import 'package:http/http.dart' as http;
 
-import '../Screens/all_products_screen.dart';
 
 class AddInfo extends StatelessWidget {
   /// {@macro add_todo_button}
@@ -52,7 +51,7 @@ final imageKey = GlobalKey<FormState>();
 final categoryKey = GlobalKey<FormState>();
 final rateKey = GlobalKey<FormState>();
 final countKey = GlobalKey<FormState>();
-final List<Products> list=[];
+final List<ProductModel> list=[];
 
 class PopupCard extends StatelessWidget {
   PopupCard({Key? key}) : super(key: key);
@@ -355,8 +354,8 @@ class PopupCard extends StatelessWidget {
 
     var data = jsonDecode(response.body.toString());
     if (response.statusCode == 200) {
-      list.add(Products.fromJson(data));
-      productsList.addAll(list);
+      list.add(ProductModel.fromJson(data));
+     // productsList.addAll(list);
     }
     else{
       prodError=true;

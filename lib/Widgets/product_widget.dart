@@ -3,19 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import '../ProvidersClass/category_provider.dart';
 import '../ProvidersClass/products_provider.dart';
 import '../Screens/products_details_screen.dart';
 
 class ProductWidget extends StatelessWidget {
   final int index;
-  final bool whichList;
+  final String whichList;
 
   const ProductWidget({super.key, required this.index, required this.whichList});
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ProductsProvider>(context); // Accessing the provider passed via ChangeNotifierProvider.value
-    final prod = (whichList) ? provider.productsList[index] : provider.searchList[index];
+    final ctgProvider = Provider.of<CategoryProvider>(context); // Accessing the provider passed via ChangeNotifierProvider.value
+    final prod = (whichList == "ProductList") ? provider.productsList[index] : (whichList == "SearchList") ? provider.searchList[index] : ctgProvider.categoryItemsList[index];
 
     return  InkWell(
       onTap: (){
