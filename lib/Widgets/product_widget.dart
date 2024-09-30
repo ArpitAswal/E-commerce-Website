@@ -26,58 +26,64 @@ class ProductWidget extends StatelessWidget {
         elevation: 12,
         shadowColor: Colors.deepPurple,
         color: Theme.of(context).cardColor,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Hero(
-                tag: "${prod.image.toString()}/HomePage",
-                transitionOnUserGestures: true,
-                child: FancyShimmerImage(
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  width: double.infinity,
-                  errorWidget: const Icon(
-                    IconlyBold.danger,
-                    color: Colors.red,
-                    size: 24,
-                  ),
-                  alignment: Alignment.center,
-                  imageUrl: prod.image!,
-                  boxFit: BoxFit.fill,
-                  boxDecoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.deepPurpleAccent,
-                        offset: Offset(
-                          3.0,
-                          3.0,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            height: double.infinity,
+            width: double.infinity,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Hero(
+                  tag: "${prod.image.toString()}/HomePage",
+                  transitionOnUserGestures: true,
+                  child: FancyShimmerImage(
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    width: double.infinity,
+                    errorWidget: const Icon(
+                      IconlyBold.danger,
+                      color: Colors.red,
+                      size: 24,
+                    ),
+                    alignment: Alignment.center,
+                    imageUrl: prod.image!,
+                    boxFit: BoxFit.fill,
+                    boxDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.deepPurpleAccent,
+                          offset: Offset(
+                            3.0,
+                            3.0,
+                          ),
+                          blurRadius: 8.0,
+                          spreadRadius: 1.0,
+                        ), //BoxShadow
+                        BoxShadow(
+                          color: Colors.white,
+                          offset: Offset(0.0, 0.0),
+                          blurRadius: 0.0,
+                          spreadRadius: 2.0,
                         ),
-                        blurRadius: 8.0,
-                        spreadRadius: 1.0,
-                      ), //BoxShadow
-                      BoxShadow(
-                        color: Colors.white,
-                        offset: Offset(0.0, 0.0),
-                        blurRadius: 0.0,
-                        spreadRadius: 2.0,
-                      ),
-                    ]
+                      ]
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(height: 8.0,),
+                Flexible(
+                  child: Text(
+                    prod.title.toString(),
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w800)
+                    ),
+                ),
+              ],
             ),
-            Text(
-              prod.title.toString(),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              softWrap: true,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w800)
-              ),
-          ],
+          ),
         ),
       ),
     );
