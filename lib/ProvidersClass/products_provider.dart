@@ -8,8 +8,6 @@ class ProductsProvider extends ChangeNotifier {
   final _service = ProductsRepositories();
 
   List<ProductModel> _productsList = [];
-  List<ProductModel> _searchList = [];
-  bool prodLoading = false;
   bool isLoading = false;
   int prodCurrentLimit = 12;
 
@@ -66,12 +64,11 @@ class ProductsProvider extends ChangeNotifier {
   ];
 
   Future<void> getAllProducts() async {
-    prodLoading = true;
+    _productsList.clear();
     notifyListeners();
     try {
       final response = await _service.getProducts();
       _productsList = response;
-      prodLoading = false;
       notifyListeners();
     } on AppException catch (e) {
       throw AppException(message: e.message, type: e.type);
@@ -85,8 +82,6 @@ class ProductsProvider extends ChangeNotifier {
       throw AppException(message: e.message, type: e.type);
     }
   }
-
-  void setSearchList(List<ProductModel> data) {}
 
   Future<void> loadMore() async {
     isLoading = true;

@@ -11,17 +11,31 @@ class ProductWidget extends StatelessWidget {
   final int index;
   final String whichList;
 
-  const ProductWidget({super.key, required this.index, required this.whichList});
+  const ProductWidget(
+      {super.key, required this.index, required this.whichList});
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ProductsProvider>(context); // Accessing the provider passed via ChangeNotifierProvider.value
-    final ctgProvider = Provider.of<CategoryProvider>(context); // Accessing the provider passed via ChangeNotifierProvider.value
-    final prod = (whichList == "ProductList") ? provider.productsList[index] : (whichList == "SearchList") ? provider.searchList[index] : ctgProvider.categoryItemsList[index];
+    final provider = context.read<
+        ProductsProvider>(); // Accessing the provider passed via ChangeNotifierProvider.value
+    final ctgProvider = context.read<
+        CategoryProvider>(); // Accessing the provider passed via ChangeNotifierProvider.value
+    final prod = (whichList == "ProductList")
+        ? provider.productsList[index]
+        : ctgProvider.categoryItemsList[index];
 
-    return  InkWell(
-      onTap: (){
-        Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: ProductDetailScreen(prodId: prod.id ?? -1,), reverseDuration: Duration(milliseconds: 700),),);
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.bottomToTop,
+            child: ProductDetailScreen(
+              prodId: prod.id ?? -1,
+            ),
+            reverseDuration: Duration(milliseconds: 700),
+          ),
+        );
       },
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
@@ -52,36 +66,38 @@ class ProductWidget extends StatelessWidget {
                     imageUrl: prod.image!,
                     boxFit: BoxFit.fill,
                     boxDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.deepPurpleAccent,
-                          offset: Offset(
-                            3.0,
-                            3.0,
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.deepPurpleAccent,
+                            offset: Offset(
+                              3.0,
+                              3.0,
+                            ),
+                            blurRadius: 8.0,
+                            spreadRadius: 1.0,
+                          ), //BoxShadow
+                          BoxShadow(
+                            color: Colors.white,
+                            offset: Offset(0.0, 0.0),
+                            blurRadius: 0.0,
+                            spreadRadius: 2.0,
                           ),
-                          blurRadius: 8.0,
-                          spreadRadius: 1.0,
-                        ), //BoxShadow
-                        BoxShadow(
-                          color: Colors.white,
-                          offset: Offset(0.0, 0.0),
-                          blurRadius: 0.0,
-                          spreadRadius: 2.0,
-                        ),
-                      ]
-                    ),
+                        ]),
                   ),
                 ),
-                SizedBox(height: 8.0,),
+                SizedBox(
+                  height: 8.0,
+                ),
                 Flexible(
-                  child: Text(
-                    prod.title.toString(),
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: true,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w800)
-                    ),
+                  child: Text(prod.title.toString(),
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelLarge
+                          ?.copyWith(fontWeight: FontWeight.w800)),
                 ),
               ],
             ),

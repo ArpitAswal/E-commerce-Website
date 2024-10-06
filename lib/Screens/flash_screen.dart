@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'home_page.dart';
-import '../Authentication/login_screen.dart';
+import 'login_screen.dart';
 
 class FlashScreen extends StatefulWidget {
   const FlashScreen({super.key});
@@ -36,12 +35,7 @@ class _FlashScreenState extends State<FlashScreen>
       _controller.stop();
       // Trigger navigation by checking auth state
       Navigator.pushReplacement(
-          context,
-          PageTransition(
-              child: const InitialScreen(),
-              curve: Curves.fastOutSlowIn,
-              type: PageTransitionType.fade,
-              duration: const Duration(milliseconds: 300)));
+          context, MaterialPageRoute(builder: (context) => InitialScreen()));
     });
   }
 

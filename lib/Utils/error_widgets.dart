@@ -7,7 +7,7 @@ class ErrorWidgets{
   // Global key to access context when needed
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  static showErrorSnackBar({required String msg, Color bgColor = Colors.white}) {
+  static showErrorSnackBar({required String msg, Color bgColor = Colors.deepPurpleAccent}) {
     final context = navigatorKey.currentContext;
       final bar = SnackBar(
         content: const Text('Hii this is GFG\'s SnackBar'),

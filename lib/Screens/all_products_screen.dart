@@ -3,38 +3,15 @@ import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_shopping_website/Widgets/product_widget.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../ProvidersClass/category_provider.dart';
 import '../Utils/gridview_attributes.dart';
 
-class AllProductScreen extends StatefulWidget {
+class AllProductScreen extends StatelessWidget {
   const AllProductScreen({super.key});
 
   @override
-  State<AllProductScreen> createState() => _AllProductScreenState();
-}
-
-class _AllProductScreenState extends State<AllProductScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Fetch categories when the screen is loaded
-      Provider.of<CategoryProvider>(context, listen: false).fetchCategories();
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    Provider.of<CategoryProvider>(context, listen: false).removeCategoryItems();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     final prodProvider = Provider.of<ProductsProvider>(context, listen: false);
     final ctgProvider = Provider.of<CategoryProvider>(context, listen: false);
 
@@ -42,60 +19,46 @@ class _AllProductScreenState extends State<AllProductScreen> {
         (BuildContext context, CategoryProvider provider, Widget? child) {
       return Column(
         children: [
-          (provider.categoryList.isEmpty)
-              ? Shimmer.fromColors(
-                  baseColor: Colors.grey.shade300,
-                  highlightColor: Colors.grey.shade400,
+          SizedBox(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height * 0.1,
+            child: ListView(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              scrollDirection: Axis.horizontal,
+              physics: AlwaysScrollableScrollPhysics(),
+              children: provider.categoryList.map((value) {
+                return InkWell(
+                  onTap: () => provider.fetchCategoryItems(value),
                   child: Container(
-                    height: height * 0.1,
-                    width: double.infinity,
-                    margin:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    constraints: BoxConstraints(minWidth: 100, maxWidth: 150),
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
-                        color: Colors.white),
-                  ))
-              : Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: provider.categoryList.map((value) {
-                      String text = value as String;
-                      return Expanded(
-                        child: InkWell(
-                          onTap: () => provider.fetchCategoryItems(value),
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: (width < 600) ? 8.0 : 46),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 8.0),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                color: Colors.lightBlue,
-                                borderRadius: BorderRadius.circular(24),
-                                border:
-                                    Border.all(color: Colors.white, width: 1.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.blueAccent,
-                                      blurRadius: 6.0,
-                                      spreadRadius: 1.5)
-                                ]),
-                            child: Text(
-                              text.capitalize(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontStyle: FontStyle.italic,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                        color: Colors.lightBlue,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: Colors.white, width: 1.5),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.blueAccent,
+                              blurRadius: 6.0,
+                              spreadRadius: 1.5)
+                        ]),
+                    child: Text(
+                      value,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w600),
+                    ),
                   ),
-                ),
+                );
+              }).toList(),
+            ),
+          ),
           Expanded(
             child: LazyLoadScrollView(
               isLoading: prodProvider.isLoading,
@@ -138,15 +101,5 @@ class _AllProductScreenState extends State<AllProductScreen> {
         ],
       );
     }));
-  }
-}
-
-extension StringExtensions on String {
-  String capitalize() {
-    String newString = "";
-    for (String word in split(" ")) {
-      newString += "${word[0].toUpperCase()}${word.substring(1)} ";
-    }
-    return newString;
   }
 }

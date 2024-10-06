@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../Authentication/firebase_auth.dart';
 import '../ProvidersClass/login_provider.dart';
-import '../Screens/home_page.dart';
+import 'home_page.dart';
 import '../Utils/error_widgets.dart';
 
 class LogInScreen extends StatelessWidget {
@@ -71,8 +71,8 @@ class _LoginFormState extends State<LoginForm> {
         return Consumer<LoginProvider>(
             builder: (BuildContext context, provider, Widget? child) {
           return AnimatedSwitcher(
-            duration: const Duration(seconds: 1),
-            reverseDuration: const Duration(seconds: 1),
+            duration: const Duration(seconds: 2),
+            reverseDuration: const Duration(seconds: 2),
             transitionBuilder: (Widget child, Animation<double> animation) =>
                 ScaleTransition(scale: animation, child: child),
             child: SizedBox(
